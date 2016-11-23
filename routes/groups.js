@@ -21,13 +21,27 @@ router.get('/:group_id', function (req, res, next) {
     })
 })
 
+router.post('/quit', function (req, res, next) {
+
+    var groupId = req.body.id;
+    var account = req.body.account;
+
+    Group.remove({ id: groupId, creator : account }, function (err) {
+        if( err )
+            res.send(err)
+        else
+            res.json({message : "Quit Group Success"})
+    })
+
+})
+
 router.post('/', function (req, res, next) {
     var group = new Group();
     group.id = req.body.id
     group.pdfData = req.body.pdfData
     group.fileName = req.body.fileName
     group.creator = req.body.creator
-    console.log(group)
+    console.log(group.creator)
 
     check(Group, 'id', group.id, function (err, exist) {
         if( err ){

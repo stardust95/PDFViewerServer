@@ -5,6 +5,7 @@
 var express = require('express');
 var router = express.Router();
 var Annotation = require('../models/annotation')
+var Group = require('../models/group')
 
 router.get('/', function (req, res, next) {
     res.json({ message : "get all annotations" })
@@ -46,11 +47,19 @@ router.post('/', function (req, res, next) {
     annotation.jsonData = req.body.jsonData
     annotation.hasSync = [ req.body.account ]
 
+    Group.findOne({ id : annotation.groupId }, function (err, result) {
+        if( err )
+            res.send(err)
+        else if ( !result ){        // no group
+            res.json({ message : "No Such Group" })
+        }
+    })
+
     annotation.save(function (err) {
         if( err )
             res.send(err)
         console.log(annotation)
-        res.json({ message : "Annotation Created", object : annotation })
+        res.json({ message : "Annotation Uploaded", object : annotation })
     })
 })
 
